@@ -43,7 +43,12 @@
       "autonomous-agent-harness": "Installs third-party MCP servers through npx",
       "jira-integration": "Jira API token through curl; use the approved Atlassian Rovo connector",
       "gan-style-harness": "Evaluator requires the Playwright MCP server, not approved",
-      "continuous-learning": "Deprecated upstream; continuous-learning-v2 is adopted"
+      "continuous-learning": "Deprecated upstream; continuous-learning-v2 is adopted",
+      "taste-distillation": "Ships a fal.ai API client (scripts/taste/falapi.py); third-party generative AI service",
+      "configure-ecc": "Runs ECC's own installer through npx; bypasses this review",
+      "recsys-pipeline-architect": "Tells Claude to install an outside skill (npx skills add)",
+      "tasteforge-video": "Depends on the excluded taste-application scripts",
+      "gateguard": "GateGuard off (Josh, 2026-10-15); also installs gateguard-ai from PyPI"
     },
     "agents": {
       "chief-of-staff": "Reads LINE and Messenger, not approved channels",
@@ -65,7 +70,12 @@
       "auto-update": "Pulls upstream changes without review",
       "instinct-import": "Imports instincts from a URL",
       "gan-build": "GAN harness, requires the Playwright MCP server",
-      "gan-design": "GAN harness, requires the Playwright MCP server"
+      "gan-design": "GAN harness, requires the Playwright MCP server",
+      "code-review": "Overlaps built-in /code-review (Josh, 2026-10-15: his and APFM skills win)",
+      "review-pr": "Overlaps built-in /code-review (Josh, 2026-10-15: his and APFM skills win)",
+      "plan": "Overlaps built-in plan mode (Josh, 2026-10-15: his and APFM skills win)",
+      "plan-prd": "Overlaps product-management:write-spec (Josh, 2026-10-15: his and APFM skills win)",
+      "prp-prd": "Overlaps product-management:write-spec (Josh, 2026-10-15: his and APFM skills win)"
     },
     "rules_common": {
       "agents.md": "Launches agents without a request; conflicts with the no-unrequested-subagent rule",
@@ -79,8 +89,10 @@
     }
   },
   "rename": {
-    "skills": {"security-review": "ecc-security-review"},
-    "commands": {"code-review": "ecc-code-review", "plan": "ecc-plan"},
+    "skills": {
+      "security-review": "ecc-security-review"
+    },
+    "commands": {},
     "_reason": "Same name as a built-in Claude Code command. The built-in /code-review is required by AI Team CLAUDE.md."
   },
   "hooks": {
@@ -96,5 +108,98 @@
       "ECC_SKIP_LLM_SUMMARY": "1"
     },
     "_env_reason": "GateGuard off; tmux is not on Windows; governance capture is opt-in upstream; ECC_SKIP_LLM_SUMMARY stops a hidden claude -p summary call every 50 messages"
+  },
+  "tiers": {
+    "_about": "Written to settings.json skillOverrides by install.py. on = description loaded every turn. off_overlap = hidden; overlaps one of Josh's or APFM skills. phase2_node = not copied until Phase 2 (Node.js), then user-invocable-only. Everything else = user-invocable-only (installed, runs with /name, no context cost).",
+    "on": {
+      "python-patterns": "Python is Josh's main code language (HCR, MVB)",
+      "python-testing": "Same",
+      "error-handling": "Pipelines and scripts",
+      "regex-vs-llm-structured-text": "Matches the 85% deterministic doctrine",
+      "loop-design-check": "Matches the loop doctrine in AI Team CLAUDE.md",
+      "mcp-dependency-review": "Policy check before any MCP approval",
+      "architecture-decision-records": "Decision records for projects",
+      "living-docs-governance": "Matches the doc-rot lessons",
+      "codebase-onboarding": "New repos and handoffs",
+      "intent-driven-development": "Acceptance criteria before a build",
+      "change-impact": "Impact analysis before risky changes",
+      "agent-introspection-debugging": "Agent and automation failures",
+      "cost-aware-llm-pipeline": "Model-call cost discipline",
+      "prompt-caching-strategy": "Claude API work",
+      "data-throughput-accelerator": "Large data movement (Databricks pulls)",
+      "healthcare-phi-compliance": "APFM handles health-adjacent data",
+      "hipaa-compliance": "Same",
+      "config-gc": "Profile cleanup",
+      "skill-stocktake": "Skill audit",
+      "product-lens": "Go/no-go on AI use cases",
+      "market-research": "Vendor and market scans"
+    },
+    "off_overlap": {
+      "seo": "seo-audit (merge 5)",
+      "accessibility": "design:accessibility-review",
+      "frontend-a11y": "design:accessibility-review",
+      "google-workspace-ops": "google-workspace",
+      "dashboard-builder": "dashboard-options-first (merge 2)",
+      "design-system": "design:design-system",
+      "remotion-video-creation": "video",
+      "competitive-report-structure": "product-management:competitive-brief",
+      "competitive-platform-analysis": "competitor-profiling (merge 6)",
+      "benchmark-methodology": "competitor-profiling (merge 6)",
+      "content-engine": "social (merge 7)",
+      "frontend-slides": "apfm-slides, apfm-pptx",
+      "marketing-campaign": "marketing-plan",
+      "email-ops": "work-email-drafts (merge 1)",
+      "agent-harness-construction": "tool-design (merge 4)",
+      "eval-harness": "evaluation (merge 3)",
+      "brand-voice": "apfm-brand-artifacts",
+      "brand-discovery": "apfm-brand-artifacts",
+      "article-writing": "copywriting, stop-slop (merge 8)",
+      "ecc-security-review": "built-in /security-review"
+    },
+    "phase2_node": {
+      "_reason": "Needs Node.js or the ECC hook runtime; off until Phase 2",
+      "skills": [
+        "ck",
+        "story-lifecycle",
+        "terminal-opener",
+        "master-agreement-generator",
+        "token-card",
+        "continuous-learning-v2",
+        "ecc-guide",
+        "skill-host-compat",
+        "cost-tracking",
+        "nanoclaw-repl",
+        "hookify-rules"
+      ],
+      "commands": [
+        "epic-claim",
+        "epic-decompose",
+        "epic-publish",
+        "epic-review",
+        "epic-sync",
+        "epic-unblock",
+        "epic-validate",
+        "harness-audit",
+        "project-init",
+        "quality-gate",
+        "sessions",
+        "setup-pm",
+        "skill-health",
+        "cost-report",
+        "hookify",
+        "hookify-configure",
+        "hookify-help",
+        "hookify-list",
+        "instinct-export",
+        "instinct-status",
+        "evolve",
+        "prune",
+        "promote",
+        "projects"
+      ]
+    },
+    "phase2_todo": [
+      "Disable URL import in continuous-learning-v2/scripts/instinct-cli.py before turning continuous learning on (prompt-injection path)"
+    ]
   }
 }

@@ -22,13 +22,39 @@ Claude Code and reviewed before use.
 
 ## Install or update
 
-Needs Python 3.12 and Node.js LTS (`node`, `npm` on PATH).
+**Phase 1 (now, no Node.js):** skills, agents, commands, and rules only.
 
 ```powershell
 python jd/build.py
+python jd/install.py --skip-hooks --dry-run
+python jd/install.py --skip-hooks
+```
+
+**Phase 2 (after Node.js LTS is installed with admin support):** adds the
+hook runtime, its pinned npm packages, and the 22 hook entries. Phase 2
+skills and commands stay `off` until their tier in `adoption.json` changes.
+
+```powershell
 python jd/install.py --dry-run
 python jd/install.py
 ```
+
+## Tiers (`skillOverrides`)
+
+`adoption.json` `tiers` sets how each skill and command appears:
+
+| Value | Meaning |
+|---|---|
+| `on` | Description loaded every turn; Claude can pick it on its own (about 20 skills that fit Josh's work) |
+| `user-invocable-only` | The default. Installed and runs with `/name`, but costs no context |
+| `off` | Hidden: overlaps one of Josh's or APFM skills, fails a check, or needs Node (Phase 2) |
+
+The installer never replaces a `skillOverrides` value Josh set himself.
+
+## Merges into Josh's skills
+
+`merges/MERGES.md` holds the ECC content proposed for Josh's own skills where
+an ECC skill overlaps one of his. It is applied only after Josh approves it.
 
 Restart Claude Code after an install. Skills, agents, and hooks load at
 session start.

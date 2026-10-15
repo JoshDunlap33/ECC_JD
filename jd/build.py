@@ -5,10 +5,17 @@ Output is deterministic: jd/claude/ is deleted and rebuilt every run, so a
 git diff of jd/claude/ shows exactly what an upstream merge changed.
 """
 import json
+import os
 import re
 import shutil
+import stat
 import sys
+import time
+from collections import Counter
 from pathlib import Path
+
+if sys.version_info < (3, 12):
+    sys.exit("build.py needs Python 3.12 or later (shutil.rmtree onexc).")
 
 REPO = Path(__file__).resolve().parent.parent
 OUT = REPO / "jd" / "claude"
@@ -38,6 +45,18 @@ TEXT_EDITS = {
     "rules/common/security.md": [
         ("2. Use **security-reviewer** agent",
          "2. Tell the user and offer the **security-reviewer** agent"),
+    ],
+    # HCR and MVB do not use black or ruff; reformatting whole files breaks
+    # "surgical changes" in AI Team CLAUDE.md.
+    "rules/python/coding-style.md": [
+        ("- **black** for code formatting",
+         "- **black** for code formatting, only if the project already uses it"),
+        ("- **ruff** for linting",
+         "- **ruff** for linting, only if the project already uses it"),
+    ],
+    "rules/python/hooks.md": [
+        ("- **black/ruff**: Auto-format `.py` files after edit",
+         "- **black/ruff**: Auto-format `.py` files after edit, only in a project that already uses them"),
     ],
     "rules/react-native/testing.md": [
         ("Use the `tdd-guide` agent proactively for new features",
@@ -216,9 +235,52 @@ def build_hooks():
     return kept, dropped
 
 
+def build_overrides(skills, cmds):
+    """skillOverrides for settings.json, plus the Phase 2 path list.
+
+    Every adopted skill and command gets a value. off_overlap items are off;
+    the "on" list is on; everything else, Phase 2 items included, is
+    user-invocable-only (runs with /name, no description loaded every turn).
+    Phase 2 items are not copied until Node.js is installed (install.py)."""
+    tiers = CFG["tiers"]
+    p2 = tiers["phase2_node"]
+    on, off = set(tiers["on"]), set(tiers["off_overlap"])
+    p2_names = set(p2["skills"]) | set(p2["commands"])
+    unknown = ((on | off | set(p2["skills"])) - skills) | (set(p2["commands"]) - cmds)
+    if unknown:
+        fail(f"tiers name items that are not adopted: {sorted(unknown)}")
+    clash = (on & off) | ((on | off) & p2_names)
+    if clash:
+        fail(f"items in more than one tier: {sorted(clash)}")
+    out = {n: ("on" if n in on else "off" if n in off else "user-invocable-only")
+           for n in sorted(skills | cmds)}
+    write(OUT / "skill-overrides.json", json.dumps(out, indent=2) + "\n")
+    p2_paths = sorted([f"skills/{n}" for n in p2["skills"]]
+                      + [f"commands/{n}.md" for n in p2["commands"]])
+    return out, p2_paths
+
+
+def clear_out():
+    """Delete the old build. OneDrive marks synced folders ReadOnly, which
+    blocks deletion on Windows: clear the flag and retry that item. Also
+    retry the whole delete briefly while OneDrive holds a file."""
+    def make_writable(func, path, _exc):
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+
+    for attempt in range(5):
+        try:
+            if OUT.exists():
+                shutil.rmtree(OUT, onexc=make_writable)
+            return
+        except PermissionError:
+            if attempt == 4:
+                raise
+            time.sleep(2)
+
+
 def main():
-    if OUT.exists():
-        shutil.rmtree(OUT)
+    clear_out()
     OUT.mkdir(parents=True)
     up_skills, up_agents, up_cmds = check_exclusions_exist()
     skills = build_skills(up_skills)
@@ -227,6 +289,7 @@ def main():
     rules = build_rules()
     build_runtime()
     kept, dropped = build_hooks()
+    overrides, p2_paths = build_overrides(set(skills), set(cmds))
 
     # Coverage: every upstream item is adopted, excluded, or shadowed.
     renamed_back = {v: k for k, v in REN["skills"].items()}
@@ -242,7 +305,9 @@ def main():
         "upstream_commit": CFG["upstream_commit"],
         "counts": {"skills": len(skills), "agents": len(agents),
                    "commands": len(cmds), "rules": len(rules),
-                   "hooks_kept": len(kept), "hooks_omitted": len(dropped)},
+                   "hooks_kept": len(kept), "hooks_omitted": len(dropped),
+                   "overrides": dict(Counter(overrides.values()))},
+        "phase2_paths": p2_paths,
         "agents_edited_for_proactive_wording": edited,
         "commands_shadowed_by_same_name_skill": shadowed,
         "skills": skills, "agents": agents, "commands": cmds,

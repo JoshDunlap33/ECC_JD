@@ -33,9 +33,9 @@ class Point(NamedTuple):
 
 ## Formatting
 
-- **black** for code formatting
+- **black** for code formatting, only if the project already uses it
 - **isort** for import sorting
-- **ruff** for linting
+- **ruff** for linting, only if the project already uses it
 
 ## Reference
 
