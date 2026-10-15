@@ -1,0 +1,100 @@
+{
+  "_about": "Josh's policy screen of upstream ECC. build.py reads this file and writes jd/claude/. Approved in Josh_ObsidianVault/To Do List/Claude Skill Adoption/2026-10-15 - ECC Policy-Clean Adoption.md. Every exclusion carries its reason.",
+  "upstream_commit": "76aaa77d",
+  "exclude": {
+    "skills": {
+      "exa-search": "Third-party MCP server (Exa), not approved",
+      "deep-research": "Third-party MCP servers (Firecrawl, Exa), not approved",
+      "documentation-lookup": "Third-party MCP server (Context7), not approved",
+      "codehealth-mcp": "Third-party MCP server (CodeScene) and access token",
+      "laravel-plugin-discovery": "Third-party MCP server (LaraPlugins)",
+      "claude-devfleet": "Third-party MCP server (DevFleet)",
+      "unified-memory": "ECC memory MCP server, not approved",
+      "fal-ai-media": "Sends content to a third-party generative AI service (fal.ai)",
+      "taste-application": "Sends content to third-party generative AI services (fal.ai, OpenAI API)",
+      "video-editing": "Sends content to third-party AI services (ElevenLabs, fal.ai)",
+      "videodb": "Uploads media to a third-party service (VideoDB)",
+      "nutrient-document-processing": "Uploads documents to a third-party API (Nutrient)",
+      "x-api": "Posts to public X account through API keys",
+      "social-publisher": "Posts to public social accounts through a third-party service",
+      "crosspost": "Posts to public social accounts",
+      "council-multi-model": "Sends work to Codex CLI, not an approved surface",
+      "deepseek-harness-setup": "DeepSeek, not an approved AI tool",
+      "hermes-imports": "Hermes agent platform, not approved",
+      "openclaw-persona-forge": "OpenClaw agent platform, not approved",
+      "nasiko-control-plane": "Nasiko external CLI, not approved",
+      "ito-baskets": "Third-party compute and prediction-market service with API keys",
+      "ito-compute": "Third-party compute purchasing with API keys",
+      "ito-inference": "Third-party compute service",
+      "ito-training": "Third-party compute service",
+      "agent-payment-x402": "Crypto wallet payments",
+      "lead-intelligence": "People enrichment that combines PII",
+      "osint-investigation": "Investigates individuals, combines PII",
+      "connections-optimizer": "Processes personal X and LinkedIn network data",
+      "social-graph-ranker": "Processes personal social network data",
+      "messages-ops": "Reads personal texts and DMs",
+      "visa-doc-translate": "Processes bank, income, and identity documents (sensitive PII)",
+      "customer-billing-ops": "Works on payment and refund data",
+      "data-scraper-agent": "Web scraping with outside LLM API keys",
+      "security-bounty-hunter": "Vulnerability hunting without authorization",
+      "agent-runtime-gateway-smoke-test": "Opens tunnels to local agent services",
+      "security-scan": "Runs third-party AgentShield through npx",
+      "repo-scan": "Installs an external skill from GitHub",
+      "autonomous-agent-harness": "Installs third-party MCP servers through npx",
+      "jira-integration": "Jira API token through curl; use the approved Atlassian Rovo connector",
+      "gan-style-harness": "Evaluator requires the Playwright MCP server, not approved",
+      "continuous-learning": "Deprecated upstream; continuous-learning-v2 is adopted"
+    },
+    "agents": {
+      "chief-of-staff": "Reads LINE and Messenger, not approved channels",
+      "docs-lookup": "Third-party MCP server (Context7)",
+      "gan-evaluator": "Requires the Playwright MCP server",
+      "gan-generator": "Part of the GAN harness, excluded with its evaluator",
+      "gan-planner": "Part of the GAN harness, excluded with its evaluator"
+    },
+    "commands": {
+      "astra-review": "Sends code to OpenAI through Codex CLI",
+      "multi-plan": "Sends work to Codex and Gemini",
+      "multi-execute": "Sends work to Codex and Gemini",
+      "multi-backend": "Sends work to Codex and Gemini",
+      "multi-frontend": "Sends work to Codex and Gemini",
+      "multi-workflow": "Sends work to Codex and Gemini",
+      "santa-loop": "Uses Codex and Gemini as reviewers",
+      "security-scan": "Runs third-party AgentShield through npx",
+      "jira": "Jira API token; use the approved Atlassian Rovo connector",
+      "auto-update": "Pulls upstream changes without review",
+      "instinct-import": "Imports instincts from a URL",
+      "gan-build": "GAN harness, requires the Playwright MCP server",
+      "gan-design": "GAN harness, requires the Playwright MCP server"
+    },
+    "rules_common": {
+      "agents.md": "Launches agents without a request; conflicts with the no-unrequested-subagent rule",
+      "patterns.md": "Tells Claude to use parallel agents without a request",
+      "performance.md": "Outdated model advice and unrequested split-role subagents",
+      "coding-style.md": "Makes 'never mutate' CRITICAL; conflicts with 'surgical changes, match existing style'",
+      "development-workflow.md": "Requires Context7 and Exa research (unapproved MCP) and mandatory agents",
+      "testing.md": "Makes TDD and 80% coverage mandatory; conflicts with 'simplicity first'",
+      "git-workflow.md": "Turns off the AI co-author label that the AI policy requires",
+      "code-review.md": "Makes reviewer agents mandatory after every change"
+    }
+  },
+  "rename": {
+    "skills": {"security-review": "ecc-security-review"},
+    "commands": {"code-review": "ecc-code-review", "plan": "ecc-plan"},
+    "_reason": "Same name as a built-in Claude Code command. The built-in /code-review is required by AI Team CLAUDE.md."
+  },
+  "hooks": {
+    "omit_entries": {
+      "pre:powershell:gateguard-fact-force": "GateGuard off (Josh, 2026-10-15)",
+      "pre:edit-write:gateguard-fact-force": "GateGuard off (Josh, 2026-10-15)",
+      "pre:governance-capture": "Upstream ships it opt-in",
+      "stop:desktop-notify": "macOS and WSL only; Josh has his own notifier hooks",
+      "pre:write:doc-file-warning": "Warns on every new .md file; the vault creates them all day"
+    },
+    "env": {
+      "ECC_DISABLED_HOOKS": "pre:bash:gateguard-fact-force,pre:bash:tmux-reminder,pre:bash:auto-tmux-dev,post:governance-capture",
+      "ECC_SKIP_LLM_SUMMARY": "1"
+    },
+    "_env_reason": "GateGuard off; tmux is not on Windows; governance capture is opt-in upstream; ECC_SKIP_LLM_SUMMARY stops a hidden claude -p summary call every 50 messages"
+  }
+}

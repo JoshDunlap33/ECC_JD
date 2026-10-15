@@ -1,0 +1,261 @@
+{
+  "env": {
+    "ECC_DISABLED_HOOKS": "pre:bash:gateguard-fact-force,pre:bash:tmux-reminder,pre:bash:auto-tmux-dev,post:governance-capture",
+    "ECC_SKIP_LLM_SUMMARY": "1"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/pre-bash-dispatcher.js",
+            "_ecc_id": "pre:bash:dispatcher"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js pre:edit-write:suggest-compact scripts/hooks/suggest-compact.js standard,strict",
+            "_ecc_id": "pre:edit-write:suggest-compact"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js pre:observe scripts/hooks/observe-runner.js standard,strict",
+            "async": true,
+            "timeout": 10,
+            "_ecc_id": "pre:observe:continuous-learning"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js pre:config-protection scripts/hooks/config-protection.js standard,strict",
+            "timeout": 5,
+            "_ecc_id": "pre:config-protection"
+          }
+        ]
+      },
+      {
+        "matcher": "^mcp__",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js pre:mcp-health-check scripts/hooks/mcp-health-check.js standard,strict",
+            "_ecc_id": "pre:mcp-health-check"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js pre:hookify-runtime scripts/hooks/hookify-runtime.js minimal,standard,strict",
+            "timeout": 10,
+            "_ecc_id": "pre:hookify-runtime"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js prompt:hookify-runtime scripts/hooks/hookify-runtime.js minimal,standard,strict",
+            "timeout": 10,
+            "_ecc_id": "prompt:hookify-runtime"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js pre:compact scripts/hooks/pre-compact.js standard,strict",
+            "_ecc_id": "pre:compact"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/session-start-bootstrap.js",
+            "_ecc_id": "session:start"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js session-start:plan-canvas-sessions scripts/hooks/plan-canvas-sessions.js standard,strict",
+            "_ecc_id": "session-start:plan-canvas-sessions"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/posttooluse-dispatcher.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s).cli()\" sync",
+            "timeout": 30,
+            "_ecc_id": "post:dispatcher:sync"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/posttooluse-dispatcher.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s).cli()\" async",
+            "async": true,
+            "timeout": 45,
+            "_ecc_id": "post:dispatcher:async"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "^mcp__",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js post:mcp-health-check scripts/hooks/mcp-health-check.js standard,strict",
+            "_ecc_id": "post:mcp-health-check"
+          }
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const s=p.join(r,'scripts/hooks/plugin-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=r;process.argv.splice(1,0,s);require(s)\" node scripts/hooks/run-with-flags.js post:skill:track scripts/hooks/skill-run-tracker.js standard,strict",
+            "_ecc_id": "post:skill:track"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const n=process.platform==='win32'&&r.charAt(0)==='/'&&/[a-zA-Z]/.test(r.charAt(1))&&(r.length===2||r.charAt(2)==='/')?r.charAt(1).toUpperCase()+':/'+r.slice(3):r;const s=p.join(n,'scripts/hooks/lifecycle-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=n;if(require('fs').existsSync(s)){process.argv.splice(1,0,s);require(s).cli()}else{process.stderr.write('[Hook] lifecycle bootstrap unavailable; skipping hook'+String.fromCharCode(10))}\" stop:hookify-runtime scripts/hooks/hookify-runtime.js minimal,standard,strict 10000",
+            "timeout": 10,
+            "_ecc_id": "stop:hookify-runtime"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const n=process.platform==='win32'&&r.charAt(0)==='/'&&/[a-zA-Z]/.test(r.charAt(1))&&(r.length===2||r.charAt(2)==='/')?r.charAt(1).toUpperCase()+':/'+r.slice(3):r;const s=p.join(n,'scripts/hooks/lifecycle-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=n;if(require('fs').existsSync(s)){process.argv.splice(1,0,s);require(s).cli()}else{process.stderr.write('[Hook] lifecycle bootstrap unavailable; skipping hook'+String.fromCharCode(10))}\" stop:plan-canvas-pending scripts/hooks/plan-canvas-pending.js minimal,standard,strict 30000",
+            "_ecc_id": "stop:plan-canvas-pending"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const n=process.platform==='win32'&&r.charAt(0)==='/'&&/[a-zA-Z]/.test(r.charAt(1))&&(r.length===2||r.charAt(2)==='/')?r.charAt(1).toUpperCase()+':/'+r.slice(3):r;const s=p.join(n,'scripts/hooks/lifecycle-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=n;if(require('fs').existsSync(s)){process.argv.splice(1,0,s);require(s).cli()}else{process.stderr.write('[Hook] lifecycle bootstrap unavailable; skipping hook'+String.fromCharCode(10))}\" stop:format-typecheck scripts/hooks/stop-format-typecheck.js standard,strict 300000",
+            "timeout": 300,
+            "_ecc_id": "stop:format-typecheck"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const n=process.platform==='win32'&&r.charAt(0)==='/'&&/[a-zA-Z]/.test(r.charAt(1))&&(r.length===2||r.charAt(2)==='/')?r.charAt(1).toUpperCase()+':/'+r.slice(3):r;const s=p.join(n,'scripts/hooks/lifecycle-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=n;if(require('fs').existsSync(s)){process.argv.splice(1,0,s);require(s).cli()}else{process.stderr.write('[Hook] lifecycle bootstrap unavailable; skipping hook'+String.fromCharCode(10))}\" stop:check-console-log scripts/hooks/check-console-log.js standard,strict 30000",
+            "_ecc_id": "stop:check-console-log"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const n=process.platform==='win32'&&r.charAt(0)==='/'&&/[a-zA-Z]/.test(r.charAt(1))&&(r.length===2||r.charAt(2)==='/')?r.charAt(1).toUpperCase()+':/'+r.slice(3):r;const s=p.join(n,'scripts/hooks/lifecycle-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=n;if(require('fs').existsSync(s)){process.argv.splice(1,0,s);require(s).cli()}else{process.stderr.write('[Hook] lifecycle bootstrap unavailable; skipping hook'+String.fromCharCode(10))}\" stop:session-end scripts/hooks/session-end.js minimal,standard,strict 30000",
+            "async": true,
+            "timeout": 10,
+            "_ecc_id": "stop:session-end"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const n=process.platform==='win32'&&r.charAt(0)==='/'&&/[a-zA-Z]/.test(r.charAt(1))&&(r.length===2||r.charAt(2)==='/')?r.charAt(1).toUpperCase()+':/'+r.slice(3):r;const s=p.join(n,'scripts/hooks/lifecycle-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=n;if(require('fs').existsSync(s)){process.argv.splice(1,0,s);require(s).cli()}else{process.stderr.write('[Hook] lifecycle bootstrap unavailable; skipping hook'+String.fromCharCode(10))}\" stop:evaluate-session scripts/hooks/evaluate-session.js minimal,standard,strict 30000",
+            "async": true,
+            "timeout": 10,
+            "_ecc_id": "stop:evaluate-session"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const n=process.platform==='win32'&&r.charAt(0)==='/'&&/[a-zA-Z]/.test(r.charAt(1))&&(r.length===2||r.charAt(2)==='/')?r.charAt(1).toUpperCase()+':/'+r.slice(3):r;const s=p.join(n,'scripts/hooks/lifecycle-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=n;if(require('fs').existsSync(s)){process.argv.splice(1,0,s);require(s).cli()}else{process.stderr.write('[Hook] lifecycle bootstrap unavailable; skipping hook'+String.fromCharCode(10))}\" stop:cost-tracker scripts/hooks/cost-tracker.js minimal,standard,strict 30000",
+            "async": true,
+            "timeout": 10,
+            "_ecc_id": "stop:cost-tracker"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=require('path');const r='__ECC_ROOT__';const n=process.platform==='win32'&&r.charAt(0)==='/'&&/[a-zA-Z]/.test(r.charAt(1))&&(r.length===2||r.charAt(2)==='/')?r.charAt(1).toUpperCase()+':/'+r.slice(3):r;const s=p.join(n,'scripts/hooks/lifecycle-hook-bootstrap.js');process.env.CLAUDE_PLUGIN_ROOT=n;if(require('fs').existsSync(s)){process.argv.splice(1,0,s);require(s).cli()}else{process.stderr.write('[Hook] lifecycle bootstrap unavailable; skipping hook'+String.fromCharCode(10))}\" session:end:marker scripts/hooks/session-end-marker.js minimal,standard,strict 30000",
+            "async": true,
+            "timeout": 10,
+            "_ecc_id": "session:end:marker"
+          }
+        ]
+      }
+    ]
+  }
+}
