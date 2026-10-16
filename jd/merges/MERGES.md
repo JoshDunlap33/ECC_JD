@@ -3,7 +3,19 @@
 Rule (Josh, 2026-10-15): where an ECC skill overlaps a skill Josh already
 has, Josh's skill wins, the ECC skill is set to `off`, and the useful parts
 of the ECC skill are added to Josh's skill. Each block below is the exact
-text to add. Nothing is applied until Josh approves it.
+text to add.
+
+**Status: all 8 applied 2026-10-16 (Josh approved).** One deviation: in
+`seo-audit` only the Location field and the two patterns were added, because
+its existing finding format is richer than ECC's. Backups of the originals:
+`~/.claude/backups/skills-pre-ecc-merge-2026-10-16`.
+
+Also applied 2026-10-16 (Josh approved): APFM policy rewrites of three of
+Josh's own skills that depended on unapproved services. `competitor-profiling`
+(Firecrawl and DataForSEO replaced by WebFetch, WebSearch, and an approved SEO
+export), `prospecting` (company-level only; enrichment tools not approved),
+`video` (generation and avatar services not approved; no custom avatars of real
+people, which is biometric data).
 
 Source: ECC upstream `76aaa77d`, MIT, Copyright (c) 2026 Affaan Mustafa.
 Each added block ends with `(from ECC <skill>, 2026-10-15)` so its origin
