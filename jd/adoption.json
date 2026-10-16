@@ -200,6 +200,26 @@
     },
     "phase2_todo": [
       "Disable URL import in continuous-learning-v2/scripts/instinct-cli.py before turning continuous learning on (prompt-injection path)"
-    ]
+    ],
+    "agents_install": {
+      "_reason": "Agent descriptions load every turn and skillOverrides cannot hide agents (Josh, 2026-10-16: work-relevant 15 only). The other adopted agents stay in jd/claude/agents and can be added here later.",
+      "names": [
+        "python-reviewer",
+        "silent-failure-hunter",
+        "security-reviewer",
+        "database-reviewer",
+        "code-reviewer",
+        "refactor-cleaner",
+        "performance-optimizer",
+        "doc-updater",
+        "planner",
+        "architect",
+        "code-explorer",
+        "pr-test-analyzer",
+        "comment-analyzer",
+        "agent-evaluator",
+        "harness-optimizer"
+      ]
+    }
   }
 }

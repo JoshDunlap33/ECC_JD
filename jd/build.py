@@ -260,6 +260,15 @@ def build_overrides(skills, cmds):
     return out, p2_paths
 
 
+def agent_skip_paths(agents):
+    """Adopted agents not on the install list stay in jd/claude/agents only."""
+    keep = set(CFG["tiers"]["agents_install"]["names"])
+    unknown = keep - set(agents)
+    if unknown:
+        fail(f"agents_install names agents that are not adopted: {sorted(unknown)}")
+    return sorted(f"agents/{a}.md" for a in agents if a not in keep)
+
+
 def clear_out():
     """Delete the old build. OneDrive marks synced folders ReadOnly, which
     blocks deletion on Windows: clear the flag and retry that item. Also
@@ -308,6 +317,7 @@ def main():
                    "hooks_kept": len(kept), "hooks_omitted": len(dropped),
                    "overrides": dict(Counter(overrides.values()))},
         "phase2_paths": p2_paths,
+        "agent_skip_paths": agent_skip_paths(agents),
         "agents_edited_for_proactive_wording": edited,
         "commands_shadowed_by_same_name_skill": shadowed,
         "skills": skills, "agents": agents, "commands": cmds,

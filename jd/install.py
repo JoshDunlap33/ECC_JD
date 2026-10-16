@@ -254,7 +254,11 @@ def main():
                  "or run with --skip-hooks.")
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    skip = set(manifest["phase2_paths"]) if args.skip_hooks else set()
+    if "agent_skip_paths" not in manifest or "phase2_paths" not in manifest:
+        sys.exit("jd/claude/ was built by an older build.py. Run: python jd/build.py")
+    skip = set(manifest["agent_skip_paths"])
+    if args.skip_hooks:
+        skip |= set(manifest["phase2_paths"])
     ledger = load_ledger()
     owned = set(ledger["items"])
     installed, collisions, removed = copy_items(plan_items(skip), owned, args.dry_run)
